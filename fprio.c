@@ -24,6 +24,7 @@ struct fprio_t *fprio_cria (){
 // Libera todas as estruturas de dados da fila, inclusive os itens.
 // Retorno: NULL.
 struct fprio_t *fprio_destroi (struct fprio_t *f){
+    if (!f) return NULL;
     struct fpnodo_t *aux, *prox;
     aux = f->prim;
     while (aux) {
@@ -40,6 +41,9 @@ int fprio_insere (struct fprio_t *f, void *item, int tipo, int prio){
 
     struct fpnodo_t *novo = (struct fpnodo_t *)malloc(sizeof(struct fpnodo_t));
     if (!novo) return -1; // Erro ao alocar memória
+
+    if (!f || !item) return -1; // Verifica se a fila ou o item são nulos
+
 
 
     novo->item = item;
@@ -69,6 +73,8 @@ int fprio_insere (struct fprio_t *f, void *item, int tipo, int prio){
 }
 
 void *fprio_retira (struct fprio_t *f, int *tipo, int *prio){
+    if(!f || !tipo || !prio) return NULL;
+    
     struct fpnodo_t *temp = f->prim;
     void *item = temp->item;
     if (tipo) *tipo = temp->tipo;
