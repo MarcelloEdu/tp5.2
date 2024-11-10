@@ -37,39 +37,42 @@ struct fprio_t *fprio_destroi (struct fprio_t *f){
 }
 //  insere um novo item na fila, 
 //  posicionado de acordo com o valor da prioridade informada
-int fprio_insere (struct fprio_t *f, void *item, int tipo, int prio){
-
-    struct fpnodo_t *novo = (struct fpnodo_t *)malloc(sizeof(struct fpnodo_t));
-    if (!novo) return -1; // Erro ao alocar memória
-
+int fprio_insere(struct fprio_t *f, void *item, int tipo, int prio) {
     if (!f || !item) return -1; // Verifica se a fila ou o item são nulos
 
+    // Verifica se o item já está na fila
+    struct fpnodo_t *atual = f->prim;
+    while (atual != NULL) {
+        if (atual->item == item) {
+            return -1; // Item já existe na fila
+        }
+        atual = atual->prox;
+    }
 
+    // Cria o novo nó
+    struct fpnodo_t *novo = (struct fpnodo_t *)malloc(sizeof(struct fpnodo_t));
+    if (!novo) return -1; // Erro ao alocar memória
 
     novo->item = item;
     novo->tipo = tipo;
     novo->prio = prio;
     novo->prox = NULL;
 
-    if (novo->item == NULL) return -1;
-
-    // Se a lista estiver vazia ou o novo item tem prioridade menor que o primeiro
+    // Insere o novo item na posição correta
     if (f->prim == NULL || f->prim->prio > prio) {
         novo->prox = f->prim;
         f->prim = novo;
     } else {
-        struct fpnodo_t *atual = f->prim;
-        while (atual->prox!= NULL && atual->prox->prio <= prio) {
+        atual = f->prim;
+        while (atual->prox != NULL && atual->prox->prio <= prio) {
             atual = atual->prox;
         }
-        // Insere o novo nodo
         novo->prox = atual->prox;
         atual->prox = novo;
     }
 
     f->num++;
     return f->num;
-    
 }
 
 void *fprio_retira (struct fprio_t *f, int *tipo, int *prio){
@@ -88,6 +91,7 @@ void *fprio_retira (struct fprio_t *f, int *tipo, int *prio){
 }
 
 int fprio_tamanho (struct fprio_t *f){
+    if (!f) return -1;
     return f->num;
 }
 
